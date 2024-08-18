@@ -1,8 +1,9 @@
 import prisma from "../db/db.config.js";
 
 export const createUser = (req, res)=>{
-  const {} = req.body;
+  const {name, email, password} = req.body;
 
+ 
   
 }
 

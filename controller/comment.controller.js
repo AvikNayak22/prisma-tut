@@ -3,7 +3,15 @@ const prisma = require("../db/db.config.js");
 export const fetchComments = async (req, res) => {
   const comments = await prisma.comment.findMany({
     include: {
-      comment: true,
+      user: true,
+      post: {
+        include: {
+          user: true,
+        },
+      },
+      orderBy: {
+        id: "desc",
+      },
     },
   });
   return res.json({ status: 200, data: comments });

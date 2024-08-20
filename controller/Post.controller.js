@@ -1,7 +1,29 @@
 const prisma = require("../db/db.config.js");
 
 export const fetchPosts = async (req, res) => {
-  const posts = await prisma.post.findMany({});
+  const posts = await prisma.post.findMany({
+    include: {
+      comment: {
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+    where: {
+      NOT: {
+        title: {
+          endsWith: "Blog",
+        },
+      },
+    },
+  });
   return res.json({ status: 200, data: posts });
 };
 
@@ -65,4 +87,18 @@ export const deleteUser = async (req, res) => {
   });
 
   return res.json({ status: 200, message: "Post deleted successfully" });
+};
+
+//to search the post
+export const searchPost = async (req, res) => {
+  const query = req.query.q;
+  const posts = await prisma.post.findMany({
+    where: {
+      description: {
+        search: query,
+      },
+    },
+  });
+
+  return res.json({ status: 200, data: posts });
 };
